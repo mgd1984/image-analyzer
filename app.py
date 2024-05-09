@@ -9,6 +9,7 @@ import numpy as np
 import av
 import os
 from pydub import AudioSegment
+import math
 
 from math import pi
 from PIL import Image
