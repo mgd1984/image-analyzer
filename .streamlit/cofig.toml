@@ -1,0 +1,4 @@
+# in .streamlit/config.toml
+[server]
+enableCORS = true
+
