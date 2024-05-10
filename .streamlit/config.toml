@@ -2,5 +2,5 @@
 [server]
 enableCORS = false
 enableXsrfProtection = false
-port = \$PORT
+port = $PORT
 
