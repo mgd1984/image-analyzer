@@ -154,45 +154,45 @@ def send_image_to_openai_vision_api(image, user_input, img_str): # Sends an imag
 
 pages = ["Image Analyzer", "Image Generator"]
 
-# page = st.sidebar.selectbox("Pick a Page", pages)
+page = st.sidebar.selectbox("Pick a Page", pages)
 
-# if page == "Image Analyzer": # Image Analyzer page allows users to analyze images using the GPT-4 Turbo Vision API.
+if page == "Image Analyzer": # Image Analyzer page allows users to analyze images using the GPT-4 Turbo Vision API.
 
-with st.container():
-            st.header("Image Analyzer")
-            show_description = st.sidebar.checkbox("Show Description", value=True)
-            if show_description:
-                st.sidebar.write("""
-                    The Advanced Image Analysis tool leverages the power of OpenAI's GPT-4 Turbo with advanced computer vision capabilities to analyze and process images with unparalleled accuracy and speed. Upload or capture an image, ask a question via the prompt window, then wait for GPT-4 Turbo to analyze the image and provide a detailed response. The tool also generates an audio response via the TTS-1-HD model with a choice of six different voices.
-                    
-                    We're way beyond [Hotdog or Not Hotdog](https://www.youtube.com/watch?v=vIci3C4JkL0) now.
-                                
-                    """)
-            with st.expander("Upload an Image", expanded=True):
-                uploaded_file = st.file_uploader("Upload an Image", type=['jpeg','png'])
-            
-            with st.expander("Take an Image", expanded=False):
-                captured_image = st.camera_input(label="Capture an Image")
+    with st.container():
+                st.header("Image Analyzer")
+                show_description = st.sidebar.checkbox("Show Description", value=True)
+                if show_description:
+                    st.sidebar.write("""
+                        The Advanced Image Analysis tool leverages the power of OpenAI's GPT-4 Turbo with advanced computer vision capabilities to analyze and process images with unparalleled accuracy and speed. Upload or capture an image, ask a question via the prompt window, then wait for GPT-4 Turbo to analyze the image and provide a detailed response. The tool also generates an audio response via the TTS-1-HD model with a choice of six different voices.
+                        
+                        We're way beyond [Hotdog or Not Hotdog](https://www.youtube.com/watch?v=vIci3C4JkL0) now.
+                                    
+                        """)
+                with st.expander("Upload an Image", expanded=True):
+                    uploaded_file = st.file_uploader("Upload an Image", type=['jpeg','png'])
+                
+                with st.expander("Take an Image", expanded=False):
+                    captured_image = st.camera_input(label="Capture an Image")
 
-            if uploaded_file is not None:
-                image = Image.open(uploaded_file)
-                user_input = st.text_input('Ask a question about the image:', key="image_question")
-                img_str = convert_image_to_base64(image)
-                response = send_image_to_openai_vision_api(image, user_input, img_str)
-                # if response and 'choices' in response and len(response['choices']) > 0 and 'message' in response['choices'][0] and 'content' in response['choices'][0]['message']:
-                #     st.markdown(response['choices'][0]['message']['content'])
-                # else:
-                #     st.write("No content available")
+                if uploaded_file is not None:
+                    image = Image.open(uploaded_file)
+                    user_input = st.text_input('Ask a question about the image:', key="image_question")
+                    img_str = convert_image_to_base64(image)
+                    response = send_image_to_openai_vision_api(image, user_input, img_str)
+                    # if response and 'choices' in response and len(response['choices']) > 0 and 'message' in response['choices'][0] and 'content' in response['choices'][0]['message']:
+                    #     st.markdown(response['choices'][0]['message']['content'])
+                    # else:
+                    #     st.write("No content available")
 
-            if captured_image is not None:
-                # Read the image data from the captured image
-                image = Image.open(captured_image)
-                # Convert the image to an array format if necessary
-                captured_image_array = np.array(image)
-                # Now you can safely use captured_image_array or the image object for further processing
-                user_input = st.text_input('Ask a question about the image:', key="image_question")
-                img_str = convert_image_to_base64(image)
-                response = send_image_to_openai_vision_api(image, user_input, img_str)
+                if captured_image is not None:
+                    # Read the image data from the captured image
+                    image = Image.open(captured_image)
+                    # Convert the image to an array format if necessary
+                    captured_image_array = np.array(image)
+                    # Now you can safely use captured_image_array or the image object for further processing
+                    user_input = st.text_input('Ask a question about the image:', key="image_question")
+                    img_str = convert_image_to_base64(image)
+                    response = send_image_to_openai_vision_api(image, user_input, img_str)
 elif page == "Image Generator": # Image Generator page allows users to generate images using OpenAI's DALL-E model.
 
         # Check permissions
