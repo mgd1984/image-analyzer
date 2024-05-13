@@ -172,8 +172,8 @@ if page == "Image Analyzer": # Image Analyzer page allows users to analyze image
                 with st.expander("Upload an Image", expanded=True):
                     uploaded_file = st.file_uploader("Upload an Image", type=['jpeg','png'])
                 
-                with st.expander("Take an Image", expanded=False):
-                    captured_image = st.camera_input(label="Capture an Image")
+                # with st.expander("Take an Image", expanded=False):
+                #     captured_image = st.camera_input(label="Capture an Image")
 
                 if uploaded_file is not None:
                     image = Image.open(uploaded_file)
