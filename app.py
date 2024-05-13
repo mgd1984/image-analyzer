@@ -25,7 +25,7 @@ from openai import OpenAI
 selected_model = None
 selected_key = None
 with st.sidebar.expander("OpenAI Configuration"):
-    selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo','gpt-4o'], index=2)
+    selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo','gpt-4o'], index=3)
     selected_key = st.text_input("API Key", type="password")
     st.write("[Get an OpenAI API Key](https://platform.openai.com/api-keys)")
 
