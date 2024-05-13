@@ -82,81 +82,83 @@ def send_image_to_openai_vision_api(image, user_input, img_str): # Sends an imag
     submit_button = st.button('Submit Prompt', key="submit_prompt_button")
 
     # Send the image to the OpenAI Vision API
-    if submit_button:
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {selected_key}"
-        }
+    with st.spinner("Analyzing"):
+        if submit_button:
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {selected_key}"
+            }
 
-        payload = {
-            "model": selected_model,  # Use the selected model
-            "messages": [
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": user_input
-                        },
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:image/png;base64,{img_str}"
+            payload = {
+                "model": selected_model,  # Use the selected model
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": user_input
+                            },
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/png;base64,{img_str}"
+                                }
                             }
-                        }
-                    ]
-                }
-            ],
-            "max_tokens": num_tokens  # Use the calculated number of tokens
-        }
+                        ]
+                    }
+                ],
+                "max_tokens": num_tokens  # Use the calculated number of tokens
+            }
 
-        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, stream=True)
+            response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload, stream=True)
 
-        response_json = response.json()  # Extract the JSON response
+            response_json = response.json()  # Extract the JSON response
 
-        if response_json:
-            # Extract the choices from the response
-            choices = response_json.get('choices', [])
+            if response_json:
+                # Extract the choices from the response
+                choices = response_json.get('choices', [])
 
-            # Display the choices
-            for choice in choices:
-                st.markdown(f"**Image Analyzer:** {choice['message']['content']}", unsafe_allow_html=True)
+                # Display the choices
+                for choice in choices:
+                    st.markdown(f"**Image Analyzer:** {choice['message']['content']}", unsafe_allow_html=True)
 
-            # Convert the response to speech
-            response_text = " ".join([choice['message']['content'] for choice in choices])
-            response_audio = client.audio.speech.create(
-                model="tts-1-hd",
-                voice=selected_voice,
-                input=response_text
-            )
+                # Convert the response to speech
+                response_text = " ".join([choice['message']['content'] for choice in choices])
+                response_audio = client.audio.speech.create(
+                    model="tts-1-hd",
+                    voice=selected_voice,
+                    input=response_text
+                )
 
-            # Save the audio to a file
-            audio = AudioSegment.from_file(io.BytesIO(response_audio.read()), format="mp3")
-            
-            # audio = audio.speedup(playback_speed=1.2)
-            audio_file = io.BytesIO()
-            audio.export(audio_file, format='mp3')
+                # Save the audio to a file
+                audio = AudioSegment.from_file(io.BytesIO(response_audio.read()), format="mp3")
+                
+                # audio = audio.speedup(playback_speed=1.2)
+                audio_file = io.BytesIO()
+                audio.export(audio_file, format='mp3')
 
-            # Create a download link for the audio file
-            audio_url = f'data:audio/mp3;base64,{base64.b64encode(audio_file.getvalue()).decode()}'
+                # Create a download link for the audio file
+                audio_url = f'data:audio/mp3;base64,{base64.b64encode(audio_file.getvalue()).decode()}'
 
-            # Display the audio player
-            st.audio(audio_url)
+                # Display the audio player
+                st.audio(audio_url)
 
-        # # Print the response chunks
-        # for chunk in response.iter_content(chunk_size=1024):
-        #     print(chunk)
-        #     print(chunk.choices[0].delta.content)
-        #     print("****************")
+            # # Print the response chunks
+            # for chunk in response.iter_content(chunk_size=1024):
+            #     print(chunk)
+            #     print(chunk.choices[0].delta.content)
+            #     print("****************")
 
-        return response_json
+            return response_json
 
 pages = ["Image Analyzer", "Image Generator"]
 
-page = st.sidebar.selectbox("Pick a Page", pages)
+# page = st.sidebar.selectbox("Pick a Page", pages)
 
-if page == "Image Analyzer": # Image Analyzer page allows users to analyze images using the GPT-4 Turbo Vision API.
-    
+# if page == "Image Analyzer": # Image Analyzer page allows users to analyze images using the GPT-4 Turbo Vision API.
+
+with st.container():
             st.header("Image Analyzer")
             show_description = st.sidebar.checkbox("Show Description", value=True)
             if show_description:
@@ -191,7 +193,6 @@ if page == "Image Analyzer": # Image Analyzer page allows users to analyze image
                 user_input = st.text_input('Ask a question about the image:', key="image_question")
                 img_str = convert_image_to_base64(image)
                 response = send_image_to_openai_vision_api(image, user_input, img_str)
-
 elif page == "Image Generator": # Image Generator page allows users to generate images using OpenAI's DALL-E model.
 
         # Check permissions
