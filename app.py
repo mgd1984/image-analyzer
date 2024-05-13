@@ -164,7 +164,7 @@ if page == "Image Analyzer": # Image Analyzer page allows users to analyze image
                 show_description = st.sidebar.checkbox("Show Description", value=True)
                 if show_description:
                     st.sidebar.write("""
-                        The Advanced Image Analysis tool leverages the power of OpenAI's GPT-4 Turbo with advanced computer vision capabilities to analyze and process images with unparalleled accuracy and speed. Upload or capture an image, ask a question via the prompt window, then wait for GPT-4 Turbo to analyze the image and provide a detailed response. The tool also generates an audio response via the TTS-1-HD model with a choice of six different voices.
+                        The Advanced Image Analysis tool leverages the power of OpenAI's GPT-4 Turbo (and now GPT-4o) with advanced computer vision capabilities to analyze and process images with unparalleled accuracy and speed. Upload or capture an image, ask a question via the prompt window, then wait for the model to analyze the image and provide a detailed response. The tool also generates an audio response via the TTS-1-HD model with a choice of six different voices.
                         
                         We're way beyond [Hotdog or Not Hotdog](https://www.youtube.com/watch?v=vIci3C4JkL0) now.
                                     
