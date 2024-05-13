@@ -229,7 +229,7 @@ elif page == "Image Generator": # Image Generator page allows users to generate 
                             prompt=prompt, 
                             size=size,
                             quality=quality,
-                            n=n,
+                            n=1,
                         )
 
                         image_urls = [image.url for image in response.data]
