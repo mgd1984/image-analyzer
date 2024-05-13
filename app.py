@@ -185,15 +185,15 @@ if page == "Image Analyzer": # Image Analyzer page allows users to analyze image
                     # else:
                     #     st.write("No content available")
 
-                if captured_image is not None:
-                    # Read the image data from the captured image
-                    image = Image.open(captured_image)
-                    # Convert the image to an array format if necessary
-                    captured_image_array = np.array(image)
-                    # Now you can safely use captured_image_array or the image object for further processing
-                    user_input = st.text_input('Ask a question about the image:', key="image_question")
-                    img_str = convert_image_to_base64(image)
-                    response = send_image_to_openai_vision_api(image, user_input, img_str)
+                # if captured_image is not None:
+                #     # Read the image data from the captured image
+                #     image = Image.open(captured_image)
+                #     # Convert the image to an array format if necessary
+                #     captured_image_array = np.array(image)
+                #     # Now you can safely use captured_image_array or the image object for further processing
+                #     user_input = st.text_input('Ask a question about the image:', key="image_question")
+                #     img_str = convert_image_to_base64(image)
+                #     response = send_image_to_openai_vision_api(image, user_input, img_str)
 elif page == "Image Generator": # Image Generator page allows users to generate images using OpenAI's DALL-E model.
 
         # Check permissions
