@@ -80,3 +80,5 @@ validators==0.22.0
 websocket-client==1.6.4
 yarl==1.9.2
 zipp==3.17.0
+opencv-python==4.9.0.80
+
