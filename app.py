@@ -221,7 +221,7 @@ elif page == "Image Generator": # Image Generator page allows users to generate 
             with st.expander("Image Generation Options", expanded=False):
                 size = st.selectbox("Image size", ["1024x1024", "1024x1792", "1792x1024"])
                 quality = st.selectbox("Image quality", ["standard", "hd"])
-                n = st.slider("Number of images to generate", 1, 10, 1)
+                # n = st.slider("Number of images to generate", 1, 10, 1)
                 if st.button('Submit', key="generate_image_button"):
                     with st.spinner("Generating images..."):
                         response = client.images.generate(
