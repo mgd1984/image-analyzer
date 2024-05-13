@@ -10,6 +10,8 @@ import av
 import os
 from pydub import AudioSegment
 import math
+import cv2
+from streamlit_image_comparison import image_comparison
 
 from math import pi
 from PIL import Image
@@ -23,7 +25,7 @@ from openai import OpenAI
 selected_model = None
 selected_key = None
 with st.sidebar.expander("OpenAI Configuration"):
-    selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo'], index=1)
+    selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo'], index=2)
     selected_key = st.text_input("API Key", type="password")
 
 client = OpenAI(api_key=selected_key) # Configure the OpenAI API
@@ -77,10 +79,7 @@ def send_image_to_openai_vision_api(image, user_input, img_str): # Sends an imag
 
     # user_input = st.text_input('Ask a question about the image:')
 
-
     submit_button = st.button('Submit Prompt', key="submit_prompt_button")
-    
-
 
     # Send the image to the OpenAI Vision API
     if submit_button:
@@ -152,7 +151,7 @@ def send_image_to_openai_vision_api(image, user_input, img_str): # Sends an imag
 
         return response_json
 
-pages = ["Image Analyzer"]
+pages = ["Image Analyzer", "Image Generator"]
 
 page = st.sidebar.selectbox("Pick a Page", pages)
 
@@ -192,4 +191,150 @@ if page == "Image Analyzer": # Image Analyzer page allows users to analyze image
                 user_input = st.text_input('Ask a question about the image:', key="image_question")
                 img_str = convert_image_to_base64(image)
                 response = send_image_to_openai_vision_api(image, user_input, img_str)
-                
+
+elif page == "Image Generator": # Image Generator page allows users to generate images using OpenAI's DALL-E model.
+
+        # Check permissions
+            st.title("Image Generator")
+            show_description = st.sidebar.checkbox("Show Description", value=True)
+            if show_description:
+                st.sidebar.write("""
+                    The Image Generation tool allows you to generate images using OpenAI's DALL-E model. Simply enter a prompt, select the image size and quality, and the tool will automatically generate images based on your input. Customize the number of images to generate and explore the creative possibilities with the DALL-E model. Experience the power of AI-driven image generation with the Image Generation tool.
+                    """)
+                prompts = [
+                    "A breathtaking sunset over a pristine beach",
+                    "A mysterious figure walking through a foggy forest",
+                    "A bustling cityscape with towering skyscrapers",
+                    "A majestic waterfall cascading down a rocky cliff",
+                    "A vibrant street market filled with exotic fruits and spices",
+                    "A group of adventurers exploring a hidden treasure cave",
+                    "A serene mountain lake reflecting the starry night sky",
+                    "A futuristic cityscape with flying cars and holographic displays",
+                    "A magical garden with talking animals and enchanted flowers",
+                    "A thrilling roller coaster ride with twists and turns"
+                ]
+
+                # prompt = random.choice(prompts)
+                prompt = st.text_input("Enter a Prompt")
+            with st.expander("Image Generation Options", expanded=False):
+                size = st.selectbox("Image size", ["1024x1024", "1024x1792", "1792x1024"])
+                quality = st.selectbox("Image quality", ["standard", "hd"])
+                n = st.slider("Number of images to generate", 1, 10, 1)
+                if st.button('Submit', key="generate_image_button"):
+                    with st.spinner("Generating images..."):
+                        response = client.images.generate(
+                            model="dall-e-3",
+                            prompt=prompt, 
+                            size=size,
+                            quality=quality,
+                            n=n,
+                        )
+
+                        image_urls = [image.url for image in response.data]
+                        image_url = image_urls[0]
+
+                        # Display the generated images
+                        for i, image_url in enumerate(image_urls):
+                            image_path = f"generated_image_{i+1}.png"
+                            image_data = requests.get(image_url).content
+
+                            # Check if the image was saved correctly
+                            if not image_data:
+                                st.write(f"Failed to save image {image_url}")
+                                continue
+
+                            with open(image_path, "wb") as f:
+                                f.write(image_data)
+
+                            try:
+                                image = Image.open(image_path)
+                            except Exception as e:
+                                st.write(f"Failed to load image {image_path}: {e}")
+                                continue
+
+                            st.image(image, caption='Generated Image', use_column_width=True)
+                            image_bytes = cv2.imencode('.png', np.array(image))[1].tobytes()
+                            st.download_button("Download Image", image_bytes, "generated_image.png", mime="image/png")
+
+
+                if st.button('Generate Image Variation w/ Dalle', key="generate_variation_button"):
+                    image_path = f"generated_image_1.png"  # Define the image_path variable
+                    response = client.images.create_variation(
+                        image=open(image_path, "rb"),
+                        n=1,
+                        size=size
+                    )
+                    variation_urls = [variation.url for variation in response.data]
+                    for i, variation_url in enumerate(variation_urls):
+                        variation_path = f"generated_variation_{i+1}.png"
+                        variation_data = requests.get(variation_url).content
+                        if not variation_data:
+                            st.write(f"Failed to save variation {variation_url}")
+                            continue
+                        with open(variation_path, "wb") as f:
+                            f.write(variation_data)
+                        try:
+                            variation_image = Image.open(variation_path)
+                        except Exception as e:
+                            st.write(f"Failed to load variation {variation_path}: {e}")
+                            continue
+                        st.image(variation_image, caption=f"Generated Variation {i+1}", use_column_width=True)
+                        variation_bytes = cv2.imencode('.png', np.array(variation_image))[1].tobytes()
+                        st.download_button(f"Download Variation {i+1}", variation_bytes, f"generated_variation_{i+1}.png", mime="image/png")
+                        
+                        # Add custom CSS to constrain the size of the container
+                        css_style = """
+                        <style>
+                        .container {
+                            display: flex;
+                            justify-content: center;
+                            max-width: 90%;
+                            overflow-x: auto;  /* Enables horizontal scrolling if content is wider than screen */
+                            box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+                        }
+                        .image-comparison {
+                            max-width: 80%;  /* Ensures the image comparison does not exceed the container width */
+                            height: auto;  /* Maintains the aspect ratio of the image */
+                        }
+                        </style>
+                        """
+
+                        st.markdown(css_style, unsafe_allow_html=True)  # Apply the custom CSS
+
+                        # Wrap the image comparison in a div with the 'container' class
+                        st.markdown('<div class="container">', unsafe_allow_html=True)
+                        image_comparison(
+                            img1=variation_image,
+                            label2="Dalle 3",
+                            img2=Image.open(image_path),
+                            label1="Dalle 2",
+                            # width=800,  # You might need to adjust or remove this width setting depending on your needs
+                            starting_position=50,
+                            show_labels=True,
+                            make_responsive=True,
+                        )
+                        st.markdown('</div>', unsafe_allow_html=True)  # Close the div
+
+
+                        # # Compare original image and variation
+                        # st.markdown('<div style="display: flex; justify-content: center; overflow-x: auto;">', unsafe_allow_html=True)
+                        # image_comparison(
+                        #     img1=variation_image,
+                        #     label2=f"Dalle 3",
+                        #     img2=Image.open(image_path),
+                        #     label1="Dalle 2",
+                        #     width=800,
+                        #     starting_position=50,
+                        #     show_labels=True,
+                        #     make_responsive=True,
+                        # )
+                        # st.markdown('</div>', unsafe_allow_html=True)
+
+                else:
+                    st.error("Failed to generate image variation. Please try again.")
+
+            # response = generate_image_with_dalle(prompt, size, quality, n)
+            # if response.status_code != 200:
+            #     st.error("Failed to generate image. Please try again.")
+else:
+    st.error("You do not have permission to access the Image Generator.")
