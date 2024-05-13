@@ -332,8 +332,8 @@ elif page == "Image Generator": # Image Generator page allows users to generate 
                         # )
                         # st.markdown('</div>', unsafe_allow_html=True)
 
-                else:
-                    st.error("Failed to generate image variation. Please try again.")
+                # else:
+                #     st.error("Failed to generate image variation. Please try again.")
 
             # response = generate_image_with_dalle(prompt, size, quality, n)
             # if response.status_code != 200:
