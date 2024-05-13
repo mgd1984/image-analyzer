@@ -1,6 +1,6 @@
 # Image Analyzer and Generator
 
-The best way to learn AI is by building. In that spirit, this project is a Streamlit web app that uses OpenAI's GPT-4 Turbo and DALL-E models to analyze and generate images. The Image Analyzer tool allows users to upload or capture an image, ask a question, and receive a detailed response from the GPT-4 Turbo model. The Image Generator tool uses the DALL-E model to generate images based on user prompts. The application also includes text-to-speech (TTS) functionality to generate audio responses using the TTS-1-HD model.
+This project is a Streamlit web app that uses OpenAI's GPT-4 Turbo and DALL-E models to analyze and generate images. The Image Analyzer tool allows users to upload or capture an image, ask a question, and receive a detailed response from the GPT-4 Turbo model. The Image Generator tool uses the DALL-E model to generate images based on user prompts. The application also includes text-to-speech (TTS) functionality to generate audio responses using the TTS-1-HD model.
 
 ## Features
 
@@ -42,6 +42,7 @@ This project uses several Python libraries including Streamlit, OpenAI, pandas, 
 
 Contributions are welcome. Please open an issue or submit a pull request.
 
-## License
+## Motivation
 
-This project is licensed under the terms of the MIT license.
+For me, the best way to learn anything has always been to build something with it. I've found this to be even more true when it comes to LLMs & Generative AI, because the playbooks on how to use these technologiacl marvels are still being written. This project was part of a larger attempt to learn the ins and outs of building LLM applications from the API up. Hopefully the code here can help you do the same.
+
